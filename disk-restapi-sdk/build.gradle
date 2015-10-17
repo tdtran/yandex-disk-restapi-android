@@ -1,21 +1,46 @@
-apply plugin: 'java'
+apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-buildscript {
-    repositories {
-        mavenCentral()
+repositories {
+    jcenter()
+}
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests {
+            all {
+                jvmArgs '-noverify'
+            }
+        }
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
 dependencies {
+    compile 'com.android.support:appcompat-v7:' + supportLibsVersion
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
@@ -29,7 +54,7 @@ dependencies {
 }
 
 group = 'com.yandex.android'
-version = '1.03'
+version = '2.0-SNAPSHOT'
 
 ext.getBooleanWithDefault = { String propertyName, boolean defaultValue ->
     boolean result = defaultValue
@@ -152,6 +177,8 @@ uploadArchives.doFirst {
     }
 }
 
+/*
+TODO resolve before publish next version
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -166,3 +193,4 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+*/

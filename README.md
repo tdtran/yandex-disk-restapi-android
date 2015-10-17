@@ -9,7 +9,7 @@ Please follow the rules and recommendations in the REST API Terms of Use and bra
 Usage
 
     dependencies {
-        compile 'com.yandex.android:disk-restapi-sdk:1.0'
+        compile 'com.yandex.android:disk-restapi-sdk:2.0'
     }
 
 

@@ -497,7 +497,11 @@ public class RestClientTest {
 
     @Test
     public void testHash() throws Exception {
-        File file = new File("../testResources/test-upload-001.bin");
+        final String fileName = "testResources/test-upload-001.bin";
+        File file = new File("../" + fileName);
+        if (!file.exists()) {
+            file = new File(fileName);
+        }
         Hash hash = Hash.getHash(file);
         assertTrue(hash.getSize() == file.length());
         assertTrue("11968e619814b8f7f0367241d6ee1c2d".equalsIgnoreCase(hash.getMd5()));

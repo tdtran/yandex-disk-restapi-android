@@ -23,8 +23,9 @@ import com.yandex.disk.rest.retrofit.CloudApi;
 import com.yandex.disk.rest.retrofit.ErrorHandlerImpl;
 import com.yandex.disk.rest.retrofit.RequestInterceptorImpl;
 import com.yandex.disk.rest.util.Hash;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.yandex.disk.rest.util.Logger;
+import com.yandex.disk.rest.util.LoggerFactory;
+
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 

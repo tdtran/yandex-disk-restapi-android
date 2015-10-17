@@ -12,9 +12,8 @@ import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.internal.Util;
 import com.yandex.disk.rest.exceptions.CancelledUploadingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.yandex.disk.rest.util.Logger;
+import com.yandex.disk.rest.util.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;

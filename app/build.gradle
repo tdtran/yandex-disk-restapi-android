@@ -33,7 +33,6 @@ repositories {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:' + supportLibsVersion
-    compile 'org.slf4j:slf4j-android:1.7.10'
     compile 'com.facebook.stetho:stetho:1.0.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.0.0'
     compile project(':disk-restapi-sdk')

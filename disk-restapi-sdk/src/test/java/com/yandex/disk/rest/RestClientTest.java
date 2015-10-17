@@ -8,9 +8,12 @@
 
 package com.yandex.disk.rest;
 
+import android.os.Build;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.yandex.android.rest.BuildConfig;
 import com.yandex.disk.rest.exceptions.CancelledDownloadException;
 import com.yandex.disk.rest.exceptions.CancelledUploadingException;
 import com.yandex.disk.rest.exceptions.ServerIOException;
@@ -23,15 +26,17 @@ import com.yandex.disk.rest.json.Operation;
 import com.yandex.disk.rest.json.Resource;
 import com.yandex.disk.rest.json.ResourceList;
 import com.yandex.disk.rest.util.Hash;
+import com.yandex.disk.rest.util.Logger;
+import com.yandex.disk.rest.util.LoggerFactory;
 import com.yandex.disk.rest.util.ResourcePath;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +67,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(JUnit4.class)
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class,
+        sdk = Build.VERSION_CODES.LOLLIPOP
+)
 public class RestClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RestClientTest.class);
@@ -71,7 +79,7 @@ public class RestClientTest {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+        ShadowLog.stream = System.out;
 
         logger.info("pwd: " + new File(".").getAbsolutePath());
 

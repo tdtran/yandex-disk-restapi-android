@@ -8,7 +8,9 @@
 
 package com.yandex.disk.rest;
 
-import retrofit.mime.TypedOutput;
+import android.support.annotation.Nullable;
+
+import com.squareup.okhttp.RequestBody;
 
 public class ResourcesArgs {
 
@@ -20,11 +22,11 @@ public class ResourcesArgs {
     private Integer limit, offset;
     private Boolean previewCrop;
     private ResourcesHandler parsingHandler;
-    private TypedOutput body;
+    private RequestBody body;
 
     private ResourcesArgs(String path, String fields, String sort, String previewSize,
                           Integer limit, Integer offset, Boolean previewCrop, String publicKey,
-                          String mediaType, TypedOutput body, ResourcesHandler parsingHandler) {
+                          String mediaType, RequestBody body, ResourcesHandler parsingHandler) {
         this.path = path;
         this.fields = fields;
         this.sort = sort;
@@ -74,10 +76,11 @@ public class ResourcesArgs {
         return previewCrop;
     }
 
-    public TypedOutput getBody() {
+    public RequestBody getBody() {
         return body;
     }
 
+    @Nullable
     public ResourcesHandler getParsingHandler() {
         return parsingHandler;
     }
@@ -104,7 +107,7 @@ public class ResourcesArgs {
         private Integer limit, offset;
         private Boolean previewCrop;
         private ResourcesHandler parsingHandler;
-        private TypedOutput body;
+        private RequestBody body;
 
         public ResourcesArgs build() {
             return new ResourcesArgs(path, fields, sort, previewSize, limit, offset, previewCrop,
@@ -166,7 +169,7 @@ public class ResourcesArgs {
             return this;
         }
 
-        public Builder setBody(TypedOutput body) {
+        public Builder setBody(RequestBody body) {
             this.body = body;
             return this;
         }

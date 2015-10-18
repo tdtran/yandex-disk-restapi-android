@@ -8,6 +8,9 @@
 
 package com.yandex.disk.rest.json;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -21,10 +24,19 @@ public class ApiError {
     @SerializedName("error")
     String error;
 
+    @NonNull
+    public final static ApiError UNKNOWN = new ApiError() {
+        {
+            description = error = "unknown";
+        }
+    };
+
+    @Nullable
     public String getDescription() {
         return description;
     }
 
+    @Nullable
     public String getError() {
         return error;
     }

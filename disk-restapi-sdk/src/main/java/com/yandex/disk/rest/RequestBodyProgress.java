@@ -8,6 +8,9 @@
 
 package com.yandex.disk.rest;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.internal.Util;
@@ -38,8 +41,8 @@ import okio.Source;
      *
      * @see RequestBody#create(com.squareup.okhttp.MediaType, java.io.File)
      */
-    /* package */ static RequestBody create(final MediaType contentType, final File file, final long startOffset,
-                              final ProgressListener listener) {
+    /* package */ static RequestBody create(@NonNull final MediaType contentType, @Nullable final File file,
+                                            final long startOffset, @Nullable final ProgressListener listener) {
         if (file == null) {
             throw new NullPointerException("content == null");
         }

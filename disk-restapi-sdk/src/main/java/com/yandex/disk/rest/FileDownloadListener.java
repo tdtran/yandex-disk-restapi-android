@@ -8,6 +8,9 @@
 
 package com.yandex.disk.rest;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,16 +18,19 @@ import java.io.OutputStream;
 
 public class FileDownloadListener extends DownloadListener {
 
+    @NonNull
     private final File saveTo;
+
+    @Nullable
     private final ProgressListener progressListener;
 
-    public FileDownloadListener(File saveTo, ProgressListener progressListener) {
+    public FileDownloadListener(@NonNull File saveTo, @Nullable ProgressListener progressListener) {
         this.saveTo = saveTo;
         this.progressListener = progressListener;
     }
 
     @Override
-    public OutputStream getOutputStream(boolean append)
+    public OutputStream getOutputStream(final boolean append)
             throws FileNotFoundException {
         return new FileOutputStream(saveTo, append);
     }
@@ -35,7 +41,7 @@ public class FileDownloadListener extends DownloadListener {
     }
 
     @Override
-    public void updateProgress(long loaded, long total) {
+    public void updateProgress(final long loaded, final long total) {
         if (progressListener != null) {
             progressListener.updateProgress(loaded, total);
         }

@@ -9,10 +9,13 @@
 package com.yandex.disk.rest;
 
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.RequestBody;
 import com.yandex.android.rest.BuildConfig;
 import com.yandex.disk.rest.exceptions.CancelledDownloadException;
 import com.yandex.disk.rest.exceptions.CancelledUploadingException;
@@ -31,7 +34,6 @@ import com.yandex.disk.rest.util.LoggerFactory;
 import com.yandex.disk.rest.util.ResourcePath;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -50,9 +52,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import retrofit.converter.GsonConverter;
-import retrofit.mime.TypedOutput;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -108,12 +107,12 @@ public class RestClientTest {
         client.getClient().networkInterceptors().add(new LoggingInterceptor(true));
     }
 
-    @Ignore @Test
+    @Test
     public void testApiVersion() throws Exception {
         ApiVersion apiVersion = client.getApiVersion();
         logger.info("apiVersion: " + apiVersion);
         assertThat(apiVersion.getBuild(), not(isEmptyOrNullString()));
-        assertTrue("2.12.22".equalsIgnoreCase(apiVersion.getBuild()));
+        assertTrue("2.27.12".equalsIgnoreCase(apiVersion.getBuild()));
         assertTrue("v1".equalsIgnoreCase(apiVersion.getApiVersion()));
     }
 
@@ -171,7 +170,7 @@ public class RestClientTest {
             }
             offset += limit;
             logger.info("offset: " + offset);
-        } while(items.getItems().size() >= limit);
+        } while (items.getItems().size() >= limit);
     }
 
     @Test
@@ -302,22 +301,22 @@ public class RestClientTest {
 
     @Test
     public void testPatchResource() throws Exception {
-        Map<String,Object> fooBar = new LinkedHashMap<>();
+        Map<String, Object> fooBar = new LinkedHashMap<>();
         fooBar.put("foo", 1);
         fooBar.put("bar", 2);
-        Map <String, Map<String,Object>> properties = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> properties = new LinkedHashMap<>();
         properties.put("custom_properties", fooBar);
 
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .setPrettyPrinting()
                 .create();
-        TypedOutput body = new GsonConverter(gson).toBody(properties);
+        byte[] body = gson.toJson(properties).getBytes();
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), body);
 
         Resource resource = client.patchResource(new ResourcesArgs.Builder()
-                        .setPath("/0-test")
-                        .setBody(body)
-                        .build());
+                .setPath("/0-test")
+                .setBody(requestBody)
+                .build());
         assertTrue("dir".equals(resource.getType()));
         assertEquals(resource.getPath(), new ResourcePath("disk", "/0-test"));
         logger.info("self: " + resource);
@@ -350,13 +349,13 @@ public class RestClientTest {
                 .build());
     }
 
-    private void checkResult(Link link)
+    private void checkResult(@NonNull final Link link)
             throws IOException, InterruptedException, WrongMethodException, HttpCodeException {
         switch (link.getHttpStatus()) {
             case done:
                 break;
             case inProgress:
-                Operation operation = client.waitProgress(link, new Runnable() {
+                final Operation operation = client.waitProgress(link, new Runnable() {
                     int i = 0;
 
                     @Override
@@ -383,7 +382,7 @@ public class RestClientTest {
     @Test
     public void testDeleteFromTrash() throws Exception {
         String name = "/drop-trash-test";
-        String path = "/0-test"+name;
+        String path = "/0-test" + name;
 
         try {
             client.delete(path, true);
@@ -408,7 +407,7 @@ public class RestClientTest {
     @Test
     public void testRestoreFromTrash() throws Exception {
         String name = "/restore-trash-test";
-        String path = "/0-test"+name;
+        String path = "/0-test" + name;
 
         try {
             client.delete(path, true);
@@ -427,7 +426,7 @@ public class RestClientTest {
     @Test
     public void testDownloadFile() throws Exception {
         String path = "/download-test.jpg";
-        File local = new File("/tmp/"+path);
+        File local = new File("/tmp/" + path);
         local.delete();
         assertFalse(local.exists());
         client.downloadFile(path, local, new ProgressListener() {
@@ -449,7 +448,7 @@ public class RestClientTest {
     @Test
     public void testDownloadFileResume() throws Exception {
         String path = "/download-test.jpg";
-        final File local = new File("/tmp/"+path);
+        final File local = new File("/tmp/" + path);
         local.delete();
         assertFalse(local.exists());
 
@@ -601,9 +600,9 @@ public class RestClientTest {
         }
 
         Link link = client.makeFolder(path);
-        logger.info("link: "+link);
+        logger.info("link: " + link);
         Operation operation = client.getOperation(link);
-        logger.info("operation: "+operation);
+        logger.info("operation: " + operation);
         assertTrue(operation.getStatus() == null);
     }
 
@@ -624,9 +623,9 @@ public class RestClientTest {
         }
 
         Link link = client.copy(from, to, false);
-        logger.info("link: "+link);
+        logger.info("link: " + link);
         Operation operation = client.getOperation(link);
-        logger.info("operation: "+operation);
+        logger.info("operation: " + operation);
         assertTrue(operation.getStatus() == null);
     }
 
@@ -647,9 +646,9 @@ public class RestClientTest {
         }
 
         Link link = client.move(from, to, false);
-        logger.info("link: "+link);
+        logger.info("link: " + link);
         Operation operation = client.getOperation(link);
-        logger.info("operation: "+operation);
+        logger.info("operation: " + operation);
         assertTrue(operation.getStatus() == null);
     }
 
@@ -764,7 +763,7 @@ public class RestClientTest {
         assertFalse(local.exists());
 
         Link link = client.publish(path);
-        logger.info("link: "+link);
+        logger.info("link: " + link);
         try {
             final String[] publicKey = new String[1];
             client.getResources(new ResourcesArgs.Builder()
@@ -778,7 +777,7 @@ public class RestClientTest {
                     .build());
 
             Link savedLink = client.savePublicResource(publicKey[0], null, null);
-            logger.info("savedLink: "+savedLink);
+            logger.info("savedLink: " + savedLink);
 
             client.downloadPublicResource(publicKey[0], "", local, new ProgressListener() {
                 @Override

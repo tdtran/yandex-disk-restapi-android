@@ -8,9 +8,10 @@
 
 package com.yandex.disk.rest.retrofit;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
-import com.yandex.disk.rest.exceptions.RetrofitConversionException;
-import com.yandex.disk.rest.exceptions.ServerIOException;
+import com.google.gson.JsonSyntaxException;
 import com.yandex.disk.rest.exceptions.http.BadGatewayException;
 import com.yandex.disk.rest.exceptions.http.BadRequestException;
 import com.yandex.disk.rest.exceptions.http.ConflictException;
@@ -34,18 +35,20 @@ import com.yandex.disk.rest.exceptions.http.UnsupportedMediaTypeException;
 import com.yandex.disk.rest.json.ApiError;
 import com.yandex.disk.rest.util.Logger;
 import com.yandex.disk.rest.util.LoggerFactory;
-import retrofit.ErrorHandler;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-public class ErrorHandlerImpl implements ErrorHandler {
+import retrofit.Response;
 
-    private static final Logger logger = LoggerFactory.getLogger(ErrorHandlerImpl.class);
+public class ErrorHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
+
+/*
+    TODO
 
     @Override
     public Throwable handleError(RetrofitError retrofitError) {
@@ -75,17 +78,40 @@ public class ErrorHandlerImpl implements ErrorHandler {
                 return new ServerIOException("ErrorHandler: unhandled error " + kind.name());
         }
     }
+*/
 
-    public static HttpCodeException createHttpCodeException(int httpCode, InputStream in) {
+    /**
+     * @return never return a value, just make compiler happy
+     */
+    @NonNull
+    public static <T> T throwHttpCodeException(@NonNull Response<T> response)
+            throws HttpCodeException {
+        ApiError error;
+        try {
+            error = readApiError(response.errorBody().byteStream());
+        } catch (IOException ex) {
+            error = ApiError.UNKNOWN;
+        }
+        throw createHttpCodeException(response.code(), error);
+    }
+
+    @NonNull
+    public static HttpCodeException createHttpCodeException(final int httpCode, @NonNull final InputStream in) {
         return createHttpCodeException(httpCode, readApiError(in));
     }
 
-    private static ApiError readApiError(InputStream in) {
-        Reader reader = new InputStreamReader(in);
-        return new Gson().fromJson(reader, ApiError.class);
+    @NonNull
+    private static ApiError readApiError(@NonNull final InputStream in) {
+        final Reader reader = new InputStreamReader(in);
+        try {
+            return new Gson().fromJson(reader, ApiError.class);
+        } catch (JsonSyntaxException ex) {
+            return ApiError.UNKNOWN;
+        }
     }
 
-    private static HttpCodeException createHttpCodeException(int httpCode, ApiError apiError) {
+    @NonNull
+    private static HttpCodeException createHttpCodeException(final int httpCode, @NonNull final ApiError apiError) {
         logger.debug("getStatus=" + httpCode);
         switch (httpCode) {
             case 400:

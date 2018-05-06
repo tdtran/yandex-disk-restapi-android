@@ -10,13 +10,14 @@ package com.yandex.disk.rest.retrofit;
 
 import android.support.annotation.NonNull;
 
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import com.yandex.disk.rest.CustomHeader;
 
 import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RequestInterceptor implements Interceptor {
 

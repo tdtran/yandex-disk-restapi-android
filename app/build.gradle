@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'idea'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -32,8 +30,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:' + supportLibsVersion
-    compile 'com.facebook.stetho:stetho:1.0.0'
-    compile 'com.facebook.stetho:stetho-okhttp:1.0.0'
-    compile project(':disk-restapi-sdk')
+    implementation 'com.android.support:appcompat-v7:' + supportLibsVersion
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    implementation project(':disk-restapi-sdk')
 }

@@ -12,13 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
-import com.squareup.okhttp.internal.http.HttpMethod;
 import com.yandex.disk.rest.exceptions.CancelledDownloadException;
 import com.yandex.disk.rest.exceptions.DownloadNoSpaceAvailableException;
 import com.yandex.disk.rest.exceptions.ServerIOException;
@@ -44,6 +37,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okhttp3.internal.http.HttpMethod;
 
 /* package */ class RestClientIO {
 
@@ -154,7 +156,7 @@ import java.util.regex.Pattern;
             while ((count = content.read(downloadBuffer)) != -1) {
                 if (downloadListener.hasCancelled()) {
                     logger.info("Downloading " + url + " canceled");
-                    client.cancel(request.tag());
+                    cancel(request.tag());
                     throw new CancelledDownloadException();
                 }
                 os.write(downloadBuffer, 0, count);
@@ -165,17 +167,7 @@ import java.util.regex.Pattern;
             throw ex;
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
-            client.cancel(request.tag());
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            } else if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            } else if (e instanceof DownloadNoSpaceAvailableException) {
-                throw (DownloadNoSpaceAvailableException) e;
-            } else {
-                // never happen
-                throw new RuntimeException(e);
-            }
+           	throw e;
         } finally {
             try {
                 if (os != null) {
@@ -186,7 +178,7 @@ import java.util.regex.Pattern;
             }
             try {
                 response.body().close();
-            } catch (IOException | NullPointerException ex) {
+            } catch (NullPointerException ex) {
                 logger.warn(ex.getMessage(), ex);
             }
         }
@@ -287,7 +279,7 @@ import java.util.regex.Pattern;
         responseBody.close();
         switch (code) {
             case 200:
-                return Long.valueOf(response.header(CONTENT_LENGTH_HEADER, "0"));
+                return Long.parseLong(response.header(CONTENT_LENGTH_HEADER, "0"));
             default:
                 return 0;
         }
@@ -351,8 +343,7 @@ import java.util.regex.Pattern;
         }
     }
 
-    private void close(@Nullable final Response response)
-            throws IOException {
+    private void close(@Nullable final Response response) {
         if (response == null) {
             return;
         }
@@ -391,6 +382,12 @@ import java.util.regex.Pattern;
             }
         }
     }
+
+    private void cancel(Object tag) {
+		for (Call call : client.dispatcher().runningCalls()) {
+			if (tag.equals(call.request().tag())) call.cancel();
+		}
+	}
 
     private static class ContentRangeResponse {
 

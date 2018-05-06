@@ -11,7 +11,6 @@ package com.yandex.disk.rest;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.squareup.okhttp.OkHttpClient;
 import com.yandex.disk.rest.exceptions.ServerException;
 import com.yandex.disk.rest.exceptions.ServerIOException;
 import com.yandex.disk.rest.exceptions.WrongMethodException;
@@ -23,6 +22,7 @@ import com.yandex.disk.rest.json.Operation;
 import com.yandex.disk.rest.json.Resource;
 import com.yandex.disk.rest.json.ResourceList;
 import com.yandex.disk.rest.retrofit.CloudApi;
+import com.yandex.disk.rest.retrofit.ErrorHandler;
 import com.yandex.disk.rest.retrofit.RequestInterceptor;
 import com.yandex.disk.rest.util.Hash;
 import com.yandex.disk.rest.util.Logger;
@@ -34,11 +34,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
-
-import static com.yandex.disk.rest.retrofit.ErrorHandler.throwHttpCodeException;
+import okhttp3.OkHttpClient;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
 
@@ -73,25 +72,24 @@ public class RestClient {
         this(credentials, OkHttpClientFactory.makeClient());
     }
 
-    public RestClient(@NonNull final Credentials credentials, @NonNull final OkHttpClient client) {
+    public RestClient(@NonNull final Credentials credentials, @NonNull final OkHttpClient.Builder client) {
         this(credentials, client, CLOUD_API_BASE_URL);
     }
 
-    public RestClient(@NonNull final Credentials credentials, @NonNull final OkHttpClient client,
+    public RestClient(@NonNull final Credentials credentials, @NonNull final OkHttpClient.Builder client,
                       @NonNull final String serverUrl) {
         this.credentials = credentials;
-        this.client = client;
         try {
             this.serverURL = new URL(serverUrl).toExternalForm();
         } catch (MalformedURLException ex) {
             throw new RuntimeException(ex);
         }
 
-        this.client.interceptors()
-                .add(new RequestInterceptor(credentials.getHeaders()));
+		client.addInterceptor(new RequestInterceptor(credentials.getHeaders()));
+		this.client = client.build();
 
         this.builder = new Retrofit.Builder()
-                .client(client)
+                .client(this.client)
                 .baseUrl(getUrl())
                 .addConverterFactory(GsonConverterFactory.create());
 
@@ -113,7 +111,7 @@ public class RestClient {
     @NonNull
     private <T> T processResponse(@NonNull Response<T> response)
             throws HttpCodeException {
-        return response.isSuccess() ? response.body() : throwHttpCodeException(response);
+        return response.isSuccessful() ? response.body() : ErrorHandler.throwHttpCodeException(response);
     }
 
     /**
@@ -432,7 +430,8 @@ public class RestClient {
      * @see <p>API reference <a href="http://api.yandex.com/disk/api/reference/upload.xml">english</a>,
      * <a href="https://tech.yandex.ru/disk/api/reference/upload-docpage/">russian</a></p>
      */
-    public void uploadFile(@NonNull final Link link, final boolean resumeUpload, @NonNull final File localSource,
+    public void uploadFile(@NonNull final Link link, final boolean resumeUpload,
+                           @NonNull final File localSource,
                            @Nullable final ProgressListener progressListener)
             throws IOException, ServerException {
         RestClientIO clientIO = new RestClientIO(client);
@@ -533,7 +532,8 @@ public class RestClient {
      * <a href="https://tech.yandex.ru/disk/api/reference/public-docpage/#download">russian</a></p>
      */
     public void downloadPublicResource(@NonNull final String publicKey, @NonNull final String path,
-                                       @NonNull final File saveTo, @Nullable final ProgressListener progressListener)
+                                       @NonNull final File saveTo,
+                                       @Nullable final ProgressListener progressListener)
             throws IOException, ServerException {
         final Link link = processResponse(cloudApi.getPublicResourceDownloadLink(publicKey, path)
                 .execute());

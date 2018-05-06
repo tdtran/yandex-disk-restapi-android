@@ -8,9 +8,7 @@
 
 package com.yandex.disk.rest;
 
-import android.support.annotation.Nullable;
-
-import com.squareup.okhttp.RequestBody;
+import okhttp3.RequestBody;
 
 public class ResourcesArgs {
 
@@ -18,11 +16,11 @@ public class ResourcesArgs {
         name, path, created, modified, size, deleted
     }
 
-    private String path, fields, sort, previewSize, publicKey, mediaType;
-    private Integer limit, offset;
-    private Boolean previewCrop;
-    private ResourcesHandler parsingHandler;
-    private RequestBody body;
+    private final String path, fields, sort, previewSize, publicKey, mediaType;
+    private final Integer limit, offset;
+    private final Boolean previewCrop;
+    private final ResourcesHandler parsingHandler;
+    private final RequestBody body;
 
     private ResourcesArgs(String path, String fields, String sort, String previewSize,
                           Integer limit, Integer offset, Boolean previewCrop, String publicKey,
@@ -80,7 +78,6 @@ public class ResourcesArgs {
         return body;
     }
 
-    @Nullable
     public ResourcesHandler getParsingHandler() {
         return parsingHandler;
     }

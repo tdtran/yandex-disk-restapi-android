@@ -36,12 +36,11 @@ import com.yandex.disk.rest.json.ApiError;
 import com.yandex.disk.rest.util.Logger;
 import com.yandex.disk.rest.util.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import retrofit.Response;
+import retrofit2.Response;
 
 public class ErrorHandler {
 
@@ -86,12 +85,7 @@ public class ErrorHandler {
     @NonNull
     public static <T> T throwHttpCodeException(@NonNull Response<T> response)
             throws HttpCodeException {
-        ApiError error;
-        try {
-            error = readApiError(response.errorBody().byteStream());
-        } catch (IOException ex) {
-            error = ApiError.UNKNOWN;
-        }
+        ApiError error = readApiError(response.errorBody().byteStream());
         throw createHttpCodeException(response.code(), error);
     }
 

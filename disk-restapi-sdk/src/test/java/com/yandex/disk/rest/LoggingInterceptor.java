@@ -9,18 +9,18 @@
 package com.yandex.disk.rest;
 
 import com.google.common.io.ByteStreams;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 import com.yandex.disk.rest.util.Logger;
 import com.yandex.disk.rest.util.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.Headers;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Buffer;
 
 public class LoggingInterceptor implements Interceptor {

@@ -8,8 +8,8 @@
 
 package com.yandex.disk.rest.util;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public interface Logger {
 

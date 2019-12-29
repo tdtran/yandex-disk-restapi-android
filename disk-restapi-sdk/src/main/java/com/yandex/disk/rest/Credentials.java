@@ -8,7 +8,7 @@
 
 package com.yandex.disk.rest;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;

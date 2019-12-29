@@ -10,10 +10,8 @@ package com.yandex.disk.rest.example;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,6 +24,8 @@ import com.yandex.disk.rest.json.Link;
 
 import java.io.File;
 import java.io.IOException;
+
+import androidx.fragment.app.FragmentManager;
 
 public class UploadFileFragment extends IODialogFragment {
 

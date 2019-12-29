@@ -8,7 +8,7 @@
 
 package com.yandex.disk.rest.exceptions.http;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.yandex.disk.rest.exceptions.ServerIOException;
 import com.yandex.disk.rest.json.ApiError;

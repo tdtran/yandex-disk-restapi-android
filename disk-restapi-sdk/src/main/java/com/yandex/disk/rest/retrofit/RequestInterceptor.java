@@ -8,7 +8,7 @@
 
 package com.yandex.disk.rest.retrofit;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.yandex.disk.rest.CustomHeader;
 

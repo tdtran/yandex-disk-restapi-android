@@ -10,11 +10,9 @@ package com.yandex.disk.rest.example;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,6 +21,8 @@ import com.yandex.disk.rest.exceptions.ServerException;
 import com.yandex.disk.rest.exceptions.http.HttpCodeException;
 
 import java.io.IOException;
+
+import androidx.fragment.app.FragmentManager;
 
 public class MakeFolderFragment extends IODialogFragment {
 

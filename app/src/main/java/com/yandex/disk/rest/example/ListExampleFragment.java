@@ -19,10 +19,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.ListFragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;

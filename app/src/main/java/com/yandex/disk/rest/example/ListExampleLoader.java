@@ -10,7 +10,8 @@ package com.yandex.disk.rest.example;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.loader.content.AsyncTaskLoader;
+
 import android.util.Log;
 
 import com.yandex.disk.rest.ResourcesArgs;

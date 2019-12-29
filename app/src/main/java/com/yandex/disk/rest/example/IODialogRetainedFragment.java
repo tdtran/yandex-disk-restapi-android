@@ -10,7 +10,8 @@ package com.yandex.disk.rest.example;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 
 public class IODialogRetainedFragment extends Fragment {
 
